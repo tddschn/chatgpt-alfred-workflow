@@ -26,9 +26,9 @@ class ChatGPTChatHistoryMessage:
     content: str | None = None
 
     # None when role == user or system, not none when role == assistant
-    # gpt-3.5-turbo: text-davinci-002-render-sha
+    # text-davinci-002-render: text-davinci-002-render-sha
     # gpt-4: gpt-4
-    model_slug: str = 'gpt-3.5-turbo'
+    model_slug: str = 'text-davinci-002-render'
 
 
 def chatgpt_conversation_to_linear_chat_history(
@@ -46,7 +46,7 @@ def chatgpt_conversation_to_linear_chat_history(
         int(chatgpt_conversation['create_time'])  # type: ignore
     ).isoformat()
 
-    model_slug = "gpt-3.5-turbo"
+    model_slug = "text-davinci-002-render"
 
     id_to_m: dict[str, ChatGPTChatHistoryMessage] = {}
     for id, message in messages.items():

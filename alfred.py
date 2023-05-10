@@ -64,7 +64,7 @@ def main(wf: Workflow3):
         wf.send_feedback()
         return
     for row in rows:
-        date_short = row['update_time'][2:11]
+        date_short = row['update_time'][2:10]
         model = row['model']
         chatgpt_url = get_chatgpt_url(row['id'])
         if query:
