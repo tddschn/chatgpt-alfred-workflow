@@ -9,6 +9,7 @@ from config import (
     chatgpt_linear_conversations_json_path,
     message_preview_len,
     alfred_subtitle_max_length,
+    alfred_title_max_length,
 )
 from utils import (
     model_slug_to_model_name,
@@ -105,13 +106,18 @@ def main(wf: Workflow3):
                 model_shorthand = model
                 model_short = model
                 subtitle_prefix = f"{model_shorthand} | {date_short}"
-
+        title_suffix = f"""{date_short}{f' ({model_short})' if model_short else ''}"""
+        row_title = row.get('title', '') or ''
+        num_white_spaces = max(
+            2, alfred_title_max_length - len(row_title) - len(title_suffix)
+        )
+        title = f"""{row_title}{' ' * num_white_spaces}{title_suffix}"""
         subtitle_remaining_length = (
             alfred_subtitle_max_length - len(subtitle_prefix) - 3
         )
         message_preview = get_message_preview(subtitle_remaining_length)
         item = Item3(
-            title=f"{row['title']} | {date_short}",
+            title=title,
             subtitle=f"{subtitle_prefix} | {message_preview}",
             # subtitle=' | '.join(
             #     (
