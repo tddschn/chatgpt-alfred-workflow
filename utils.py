@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 
 model_slug_to_model_name_map = {
     # gpt-3.5-turbo: text-davinci-002-render-sha
@@ -22,8 +23,17 @@ def model_slug_to_model_name(model_slug: str) -> str:
     raise ValueError(f'Unknown model_slug: {model_slug}')
 
 
-def get_chatgpt_url(id: str) -> str:
-    return f'https://chat.openai.com/c/{id}'
+def chatgpt_conversation_id_to_url(
+    id: str, destination: Literal['chatgpt', 'typingmind']
+) -> str:
+    match destination:
+        case 'chatgpt':
+            return f'https://chat.openai.com/c/{id}'
+        case 'typingmind':
+            # https://www.typingmind.com/#chat=eac3e257-d2e2-4801-a377-f09323756433
+            return f'https://www.typingmind.com/#chat={id}'
+        case _:
+            raise ValueError(f'Unknown destination: {destination}')
 
 
 def search_and_extract_preview(

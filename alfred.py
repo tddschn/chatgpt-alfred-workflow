@@ -6,7 +6,11 @@ import sys
 from workflow import Workflow3
 from workflow.workflow3 import Item3
 from config import chatgpt_linear_conversations_json_path, message_preview_len
-from utils import model_slug_to_model_name, search_and_extract_preview, get_chatgpt_url
+from utils import (
+    model_slug_to_model_name,
+    search_and_extract_preview,
+    chatgpt_conversation_id_to_url,
+)
 
 
 def get_rows() -> list[dict]:
@@ -66,7 +70,7 @@ def main(wf: Workflow3):
     for row in rows:
         date_short = row['update_time'][2:10]
         model = row['model']
-        chatgpt_url = get_chatgpt_url(row['id'])
+        chatgpt_url = chatgpt_conversation_id_to_url(row['id'])
         if query:
             message_preview = search_and_extract_preview(
                 query, row['concatenated_messages'], message_preview_len, False
