@@ -70,7 +70,8 @@ def main(wf: Workflow3):
     for row in rows:
         date_short = row['update_time'][2:10]
         model = row['model']
-        chatgpt_url = chatgpt_conversation_id_to_url(row['id'])
+        # chatgpt_url = chatgpt_conversation_id_to_url(row['id'], 'chatgpt')
+        typingmind_url = chatgpt_conversation_id_to_url(row['id'], 'typingmind')
         if query:
             message_preview = search_and_extract_preview(
                 query, row['concatenated_messages'], message_preview_len, False
@@ -94,7 +95,7 @@ def main(wf: Workflow3):
                 )
             ),
             # quicklookurl=row['non_key_markdown_source'],
-            arg=chatgpt_url,
+            arg=typingmind_url,
             valid=True,
         )
         # item.add_modifier(
