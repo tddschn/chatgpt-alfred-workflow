@@ -79,7 +79,7 @@ def chatgpt_conversation_to_linear_chat_history(
         'id': id,
         'title': title,
         'update_time': update_time_iso,
-        'linear_messages': [m.content for m in linear_messages if m],
+        'linear_messages': [m.content for m in linear_messages if m.content],
     }
 
 
