@@ -5,11 +5,16 @@ import json
 import sys
 from workflow import Workflow3
 from workflow.workflow3 import Item3
-from config import chatgpt_linear_conversations_json_path, message_preview_len
+from config import (
+    chatgpt_linear_conversations_json_path,
+    message_preview_len,
+    alfred_subtitle_max_length,
+)
 from utils import (
     model_slug_to_model_name,
     search_and_extract_preview,
     chatgpt_conversation_id_to_url,
+    iso_to_month_day,
 )
 
 
@@ -68,32 +73,50 @@ def main(wf: Workflow3):
         wf.send_feedback()
         return
     for row in rows:
-        date_short = row['update_time'][2:10]
+        date_short = iso_to_month_day(row['update_time'])
         model = row['model']
         chatgpt_url = chatgpt_conversation_id_to_url(row['id'], 'chatgpt')
         typingmind_url = chatgpt_conversation_id_to_url(row['id'], 'typingmind')
-        if query:
-            message_preview = search_and_extract_preview(
-                query, row['concatenated_messages'], message_preview_len, False
-            )
-        else:
-            message_preview = row['concatenated_messages'][:message_preview_len]
+
+        def get_message_preview(preview_len: int = message_preview_len) -> str:
+            if query:
+                message_preview = search_and_extract_preview(
+                    query,
+                    row['concatenated_messages'].strip(),
+                    message_preview_len,
+                    False,
+                )
+            else:
+                message_preview = row['concatenated_messages'].strip()[
+                    :message_preview_len
+                ]
+            return message_preview
+
         match model:
             case 'gpt-3.5-turbo':
                 model_shorthand = '3.5'
+                subtitle_prefix = date_short
             case 'gpt-4':
                 model_shorthand = '4'
+                subtitle_prefix = f"GPT-4 | {date_short}"
             case _:
                 model_shorthand = model
+                subtitle_prefix = f"{model_shorthand} | {date_short}"
+
+        subtitle_remaining_length = (
+            alfred_subtitle_max_length - len(subtitle_prefix) - 3
+        )
+        message_preview = get_message_preview(subtitle_remaining_length)
         item = Item3(
             title=row['title'],
-            subtitle=' | '.join(
-                (
-                    model_shorthand,
-                    date_short,
-                    message_preview,
-                )
-            ),
+            subtitle=f"{subtitle_prefix} | {message_preview}",
+            # subtitle=' | '.join(
+            #     (
+            #         model_shorthand,
+            #         date_short,
+            #         message_preview.replace('\n', ' '),
+            #     )
+            # ),
             # quicklookurl=row['non_key_markdown_source'],
             arg=chatgpt_url,
             valid=True,

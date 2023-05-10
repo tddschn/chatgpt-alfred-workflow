@@ -1,4 +1,5 @@
 from datetime import datetime
+from functools import cache
 from typing import Literal
 
 model_slug_to_model_name_map = {
@@ -15,6 +16,19 @@ def date_from_chatgpt_unix_timestamp(ts: str) -> datetime:
     # ts is like 1682000887.0
     # handles 1683712597.463997 too
     return datetime.fromtimestamp(float(ts))
+
+
+@cache
+def get_current_year() -> int:
+    return datetime.now().year
+
+
+def iso_to_month_day(iso_string):
+    dt = datetime.fromisoformat(iso_string)
+    if dt.year == get_current_year():
+        return f"{dt.month}/{dt.day}"
+    else:
+        return f"{dt.month}/{dt.day}/{dt.year}"
 
 
 def model_slug_to_model_name(model_slug: str) -> str:
