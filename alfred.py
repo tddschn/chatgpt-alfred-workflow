@@ -2,16 +2,11 @@
 
 from pprint import pformat
 import json
-import re
-import sys, csv
+import sys
 from workflow import Workflow3
 from workflow.workflow3 import Item3
 from config import chatgpt_linear_conversations_json_path, message_preview_len
 from utils import model_slug_to_model_name, search_and_extract_preview, get_chatgpt_url
-from pathlib import Path
-
-
-# from tabulate import tabulate
 
 
 def get_rows() -> list[dict]:

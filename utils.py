@@ -1,5 +1,11 @@
-from config import model_slug_to_model_name_map
 from datetime import datetime
+
+model_slug_to_model_name_map = {
+    # gpt-3.5-turbo: text-davinci-002-render-sha
+    # gpt-4: gpt-4
+    'text-davinci-002-render-sha': 'gpt-3.5-turbo',
+    'gpt-4': 'gpt-4',
+}
 
 
 def date_from_chatgpt_unix_timestamp(ts: str) -> datetime:
@@ -12,6 +18,7 @@ def model_slug_to_model_name(model_slug: str) -> str:
     if model_name := model_slug_to_model_name_map.get(model_slug):
         return model_name
     raise ValueError(f'Unknown model_slug: {model_slug}')
+
 
 def get_chatgpt_url(id: str) -> str:
     return f'https://chat.openai.com/c/{id}'
