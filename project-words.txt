@@ -13,11 +13,13 @@ bundleid
 cachedir
 cachefile
 capitalised
+chatgpt
 coersion
 COLOUR
 colour
 copytext
 datadir
+davinci
 deanishe
 delcache
 deldata
@@ -35,6 +37,7 @@ foldingon
 getpid
 Hazzard
 himym
+icecream
 ICNS
 icns
 iconset
@@ -91,6 +94,7 @@ Sosumi
 strerror
 temppath
 Tink
+typingmind
 unchanced
 unhexlify
 unicodify
@@ -101,4 +105,5 @@ waitpid
 wfsess
 workflowdir
 workflowfile
+Xinyuan
 Xworkflow
