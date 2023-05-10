@@ -94,13 +94,16 @@ def main(wf: Workflow3):
 
         match model:
             case 'gpt-3.5-turbo':
+                model_short = ''
                 model_shorthand = '3.5'
                 subtitle_prefix = date_short
             case 'gpt-4':
                 model_shorthand = '4'
+                model_short = 'GPT-4'
                 subtitle_prefix = f"GPT-4 | {date_short}"
             case _:
                 model_shorthand = model
+                model_short = model
                 subtitle_prefix = f"{model_shorthand} | {date_short}"
 
         subtitle_remaining_length = (
@@ -108,7 +111,7 @@ def main(wf: Workflow3):
         )
         message_preview = get_message_preview(subtitle_remaining_length)
         item = Item3(
-            title=row['title'],
+            title=f"{row['title']} | {date_short}",
             subtitle=f"{subtitle_prefix} | {message_preview}",
             # subtitle=' | '.join(
             #     (
