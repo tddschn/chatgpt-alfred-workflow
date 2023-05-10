@@ -25,6 +25,11 @@ class ChatGPTChatHistoryMessage:
     role: str | None = None
     content: str | None = None
 
+    # None when role == user or system, not none when role == assistant
+    # gpt-3.5-turbo: text-davinci-002-render-sha
+    # gpt-4: gpt-4
+    model_slug: str | None = None
+
 
 def chatgpt_conversation_to_linear_chat_history(
     chatgpt_conversation: dict,
@@ -37,6 +42,11 @@ def chatgpt_conversation_to_linear_chat_history(
         chatgpt_conversation['update_time']
     )
     update_time_iso = update_time_dt.isoformat()
+    create_time_iso = date_from_chatgpt_unix_timestamp(
+        int(chatgpt_conversation['create_time'])  # type: ignore
+    ).isoformat()
+
+    model_slug = None
 
     id_to_m: dict[str, ChatGPTChatHistoryMessage] = {}
     for id, message in messages.items():
@@ -49,6 +59,10 @@ def chatgpt_conversation_to_linear_chat_history(
         if msg is not None:
             m.role = msg['author']['role']
             m.content = msg['content']['parts'][0]
+            if metadata := msg.get('metadata'):
+                m.model_slug = metadata.get('model_slug')
+                if m.model_slug is not None:
+                    model_slug = m.model_slug
         else:
             m.role = None
             m.content = None
@@ -79,6 +93,8 @@ def chatgpt_conversation_to_linear_chat_history(
         'id': id,
         'title': title,
         'update_time': update_time_iso,
+        'create_time': create_time_iso,
+        'model_slug': model_slug,
         'linear_messages': [m.content for m in linear_messages if m.content],
     }
 
