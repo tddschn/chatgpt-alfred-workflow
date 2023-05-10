@@ -35,7 +35,7 @@ def chatgpt_conversation_to_linear_chat_history(
     chatgpt_conversation: dict,
 ) -> dict[str, Any]:
     """Convert a single conversation in the exported json to linear chat messages"""
-    id: str = chatgpt_conversation['id']
+    conversation_id: str = chatgpt_conversation['id']
     title: str = chatgpt_conversation['title']
     messages = chatgpt_conversation['mapping']
     update_time_dt = date_from_chatgpt_unix_timestamp(
@@ -90,7 +90,7 @@ def chatgpt_conversation_to_linear_chat_history(
         linear_messages.append(root_message)
 
     return {
-        'id': id,
+        'id': conversation_id,
         'title': title,
         'update_time': update_time_iso,
         'create_time': create_time_iso,
