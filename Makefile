@@ -6,6 +6,7 @@ update-repo-from-workflow:
 
 update-conversations-json:
 	./update_conversations_json.sh
+	./generate_preview_files.py
 
 update-conversations-json-and-workflow: update-conversations-json update-workflow
 

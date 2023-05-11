@@ -2,7 +2,7 @@
 """
 Author : Xinyuan Chen <45612704+tddschn@users.noreply.github.com>
 Date   : 2023-05-10
-Purpose: Why not?
+Purpose: Convert conversations.json to a linear conversation format
 """
 
 import argparse
@@ -103,7 +103,8 @@ def get_args():
     """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Why not?', formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        description='Convert conversations.json to a linear conversation format',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
     parser.add_argument(
