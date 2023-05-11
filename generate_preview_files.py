@@ -5,6 +5,7 @@ Date   : 2023-05-11
 Purpose: Generate preview files for Alfred list filter preview
 """
 
+from textwrap import dedent
 from tqdm import tqdm
 import argparse
 from pathlib import Path
@@ -38,15 +39,16 @@ def generate_preview_markdown(conversation: dict) -> str:
     ---
 
     {formatted_messages}
-    """
+    """.strip()
+    template = dedent(template)
 
     processed_lm: list[str] = conversation['linear_messages']
     # processed_lm[::2] = [f'<pre>\n{m}\n</pre>' for m in processed_lm[::2]]
     processed_lm[::2] = [f'<pre class="user">\n{m}\n</pre>' for m in processed_lm[::2]]
-    processed_lm[1:1:2] = [
-        f'<pre class="assistant">\n{m}\n</pre>' for m in processed_lm[1:1:2]
+    processed_lm[1::2] = [
+        f'<pre class="assistant">\n{m}\n</pre>' for m in processed_lm[1::2]
     ]
-    formatted_messages = '\n---\n'.join(processed_lm)
+    formatted_messages = '\n\n---\n\n'.join(processed_lm)
     return template.format(
         title=title,
         title_suffix=title_suffix,
