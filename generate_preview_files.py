@@ -8,9 +8,8 @@ Purpose: Generate preview files for Alfred list filter preview
 from textwrap import dedent
 from tqdm import tqdm
 import argparse
-from pathlib import Path
 from config import chatgpt_linear_conversations_json_path, generated_dir
-from utils import model_slug_to_model_name
+from utils import model_slug_to_model_name, chatgpt_conversation_id_to_url
 
 
 def generate_preview_markdown(conversation: dict) -> str:
@@ -30,29 +29,34 @@ def generate_preview_markdown(conversation: dict) -> str:
     title_suffix = f"""{date_short}{f' ({model_short})' if model_short else ''}"""
 
     template = """
+    <link rel="stylesheet" href="../css/markdown_preview.css">
     # {title}
 
-    <link rel="stylesheet" href="../css/markdown_preview.css">
+    [ChatGPT]({chatgpt_url})
+
+    [TypingMind]({typingmind_url})
 
     {title_suffix}
 
     ---
 
     {formatted_messages}
-    """.strip()
-    template = dedent(template)
+    """
+    template = dedent(template).strip()
 
     processed_lm: list[str] = conversation['linear_messages']
     # processed_lm[::2] = [f'<pre>\n{m}\n</pre>' for m in processed_lm[::2]]
     processed_lm[::2] = [f'<pre class="user">\n{m}\n</pre>' for m in processed_lm[::2]]
     processed_lm[1::2] = [
-        f'<pre class="assistant">\n{m}\n</pre>' for m in processed_lm[1::2]
+        f'<pre class="assistant">\n{m}\n</pre>\n' for m in processed_lm[1::2]
     ]
     formatted_messages = '\n\n---\n\n'.join(processed_lm)
     return template.format(
         title=title,
         title_suffix=title_suffix,
         formatted_messages=formatted_messages,
+        chatgpt_url=chatgpt_conversation_id_to_url(conversation['id'], 'chatgpt'),
+        typingmind_url=chatgpt_conversation_id_to_url(conversation['id'], 'typingmind'),
     )
 
 
