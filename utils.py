@@ -9,6 +9,7 @@ model_slug_to_model_name_map = {
     'text-davinci-002-render-paid': 'gpt-3.5-turbo',
     'text-davinci-002-render': 'gpt-3.5-turbo',
     'gpt-4': 'gpt-4',
+    'text-davinci-002-plugins': 'plugins'
 }
 
 

@@ -102,6 +102,10 @@ def main(wf: Workflow3):
                 model_shorthand = '4'
                 model_short = 'GPT-4'
                 subtitle_prefix = f"GPT-4 | {date_short}"
+            case 'plugins':
+                model_shorthand = 'Plugins'
+                model_short = 'Plugins'
+                subtitle_prefix = f"{model_shorthand} | {date_short}"
             case _:
                 model_shorthand = model
                 model_short = model
