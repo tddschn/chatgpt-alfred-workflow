@@ -115,10 +115,11 @@ def main(wf: Workflow3):
         subtitle_remaining_length = (
             alfred_subtitle_max_length - len(subtitle_prefix) - 3
         )
-        message_preview = get_message_preview(subtitle_remaining_length)
+        message_preview = get_message_preview(alfred_subtitle_max_length)
         item = Item3(
             title=title,
-            subtitle=f"{subtitle_prefix} | {message_preview}",
+            # subtitle=f"{subtitle_prefix} | {message_preview}",
+            subtitle=f"{message_preview}",
             # subtitle=' | '.join(
             #     (
             #         model_shorthand,
