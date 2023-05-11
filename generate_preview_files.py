@@ -31,6 +31,8 @@ def generate_preview_markdown(conversation: dict) -> str:
     template = """
     # {title}
 
+    <link rel="stylesheet" href="../css/markdown_preview.css">
+
     {title_suffix}
 
     ---
@@ -40,7 +42,10 @@ def generate_preview_markdown(conversation: dict) -> str:
 
     processed_lm: list[str] = conversation['linear_messages']
     # processed_lm[::2] = [f'<pre>\n{m}\n</pre>' for m in processed_lm[::2]]
-    processed_lm[:] = [f'<pre>\n{m}\n</pre>' for m in processed_lm[:]]
+    processed_lm[::2] = [f'<pre class="user">\n{m}\n</pre>' for m in processed_lm[::2]]
+    processed_lm[1:1:2] = [
+        f'<pre class="assistant">\n{m}\n</pre>' for m in processed_lm[1:1:2]
+    ]
     formatted_messages = '\n---\n'.join(processed_lm)
     return template.format(
         title=title,
