@@ -11,6 +11,8 @@ from config import (
     alfred_subtitle_max_length,
     alfred_title_max_length,
     generated_dir,
+    assets_dir,
+    gpt_4_icon_path,
 )
 from utils import (
     model_slug_to_model_name,
@@ -79,6 +81,7 @@ def main(wf: Workflow3):
         model = row['model']
         chatgpt_url = chatgpt_conversation_id_to_url(row['id'], 'chatgpt')
         typingmind_url = chatgpt_conversation_id_to_url(row['id'], 'typingmind')
+        item3_kwargs = {}
 
         def get_message_preview(preview_len: int = message_preview_len) -> str:
             if query:
@@ -103,6 +106,7 @@ def main(wf: Workflow3):
                 model_shorthand = '4'
                 model_short = 'GPT-4'
                 subtitle_prefix = f"GPT-4 | {date_short}"
+                item3_kwargs |= {'icon': str(gpt_4_icon_path)}
             case 'plugins':
                 model_shorthand = 'Plugins'
                 model_short = 'Plugins'
@@ -135,12 +139,14 @@ def main(wf: Workflow3):
             quicklookurl=str(generated_dir / f"{row['id']}.md"),
             arg=chatgpt_url,
             valid=True,
+            **item3_kwargs,
         )
         item.add_modifier(
             'cmd',
             subtitle='Open on TypingMind',
             arg=typingmind_url,
             valid=True,
+            **item3_kwargs,
         )
         # item.add_modifier(
         #     'alt',
