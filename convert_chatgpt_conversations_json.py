@@ -49,12 +49,12 @@ def chatgpt_conversation_to_linear_chat_history(
     model_slug = "text-davinci-002-render"
 
     id_to_m: dict[str, ChatGPTChatHistoryMessage] = {}
-    for id, message in messages.items():
+    for msg_id, message in messages.items():
         m = ChatGPTChatHistoryMessage()
-        m.id = id
+        m.id = msg_id
         m.parent_id = message['parent']
         m.children_ids = message['children']
-        id_to_m[id] = m
+        id_to_m[msg_id] = m
         msg = message['message']
         if msg is not None:
             m.role = msg['author']['role']
@@ -67,7 +67,7 @@ def chatgpt_conversation_to_linear_chat_history(
             m.role = None
             m.content = None
 
-    for id, message in id_to_m.items():
+    for msg_id, message in id_to_m.items():
         if message.parent_id:
             message.parent = id_to_m[message.parent_id]
         message.children = [id_to_m[child_id] for child_id in message.children_ids]
