@@ -19,3 +19,5 @@ chatgpt_data_export_zip_glob_pattern = r'*[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-
 chatgpt_data_export_zip_regex_pattern = (
     r'[0-9a-f]{64}-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}.zip'
 )
+
+generated_dir = parent_dir / 'generated'
