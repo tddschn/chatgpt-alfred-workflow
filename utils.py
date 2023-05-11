@@ -111,7 +111,10 @@ def get_creation_time(file_path: os.PathLike) -> float | int:
 
 
 def find_last_added_file(
-    dir_path: os.PathLike, glob_pattern: str | None = None, recursive: bool = False
+    dir_path: os.PathLike,
+    glob_pattern: str | None = None,
+    recursive: bool = False,
+    regex_pattern: str | None = None,
 ) -> Path:
     """
     Find the last added file in a directory.
@@ -130,5 +133,14 @@ def find_last_added_file(
         else:
             files = dir_path.glob(glob_pattern)
 
-    last_added_file = max(files, key=get_creation_time)
-    return last_added_file
+    if regex_pattern is not None:
+        import re
+
+        files = filter(lambda f: re.search(regex_pattern, f.name), files)
+    try:
+        last_added_file = max(files, key=get_creation_time)
+        return last_added_file
+    except:
+        raise ValueError(
+            f"No files found in {dir_path} with pattern {glob_pattern} (recursive={recursive})"
+        )
