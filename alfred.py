@@ -10,6 +10,7 @@ from config import (
     message_preview_len,
     alfred_subtitle_max_length,
     alfred_title_max_length,
+    generated_dir,
 )
 from utils import (
     model_slug_to_model_name,
@@ -131,7 +132,7 @@ def main(wf: Workflow3):
             #         message_preview.replace('\n', ' '),
             #     )
             # ),
-            # quicklookurl=row['non_key_markdown_source'],
+            quicklookurl=str(generated_dir / f"{row['id']}.md"),
             arg=chatgpt_url,
             valid=True,
         )
