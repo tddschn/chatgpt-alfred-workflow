@@ -11,7 +11,7 @@ from config import (
     alfred_subtitle_max_length,
     alfred_title_max_length,
     generated_dir,
-    assets_dir,
+    alfred_workflow_cache_key,
     gpt_4_icon_path,
 )
 from utils import (
@@ -64,7 +64,7 @@ def main(wf: Workflow3):
         query = wf.args[0]
     else:
         query = None
-    rows = wf.cached_data('rows', get_rows, max_age=3600)
+    rows = wf.cached_data(alfred_workflow_cache_key, get_rows, max_age=3600)
     if not rows:
         wf.add_item('No results found')
         wf.send_feedback()

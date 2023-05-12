@@ -23,3 +23,5 @@ chatgpt_data_export_zip_regex_pattern = (
 generated_dir = parent_dir / 'generated'
 assets_dir = parent_dir / 'assets'
 gpt_4_icon_path = assets_dir / 'GPT-4.png'
+
+alfred_workflow_cache_key = 'chatgpt-alfred-workflow'
