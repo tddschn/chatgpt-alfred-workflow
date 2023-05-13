@@ -8,7 +8,7 @@ Purpose: Convert conversations.json to a linear conversation format
 import argparse
 import json
 from pathlib import Path
-from typing import Any, Union
+from typing import Any, Literal, Union
 from utils import date_from_chatgpt_unix_timestamp
 from config import (
     chatgpt_exported_conversations_json_path,
@@ -29,6 +29,13 @@ class ChatGPTChatHistoryMessage:
     # text-davinci-002-render: text-davinci-002-render-sha
     # gpt-4: gpt-4
     model_slug: str = 'text-davinci-002-render'
+
+    # None, 'all', 'kayak.whatever' etc
+    recipient: str | None = None
+
+    # <|im_end|> if it's a message to a tool
+    # <|diff_marker|> if it's the final response to the user
+    finish_details_marker: Literal['<|im_end|>', '<|diff_marker|>'] | None = None
 
 
 def chatgpt_conversation_to_linear_chat_history(
@@ -60,10 +67,13 @@ def chatgpt_conversation_to_linear_chat_history(
         if msg is not None:
             m.role = msg['author']['role']
             m.content = msg['content']['parts'][0]
+            m.recipient = msg['recipient']
             if metadata := msg.get('metadata'):
                 m.model_slug = metadata.get('model_slug')
                 if m.model_slug is not None:
                     model_slug = m.model_slug
+                if finish_details := metadata.get('finish_details'):
+                    m.finish_details_marker = finish_details['stop']
         else:
             m.role = None
             m.content = None
