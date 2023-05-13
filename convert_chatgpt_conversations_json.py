@@ -47,6 +47,7 @@ def chatgpt_conversation_to_linear_chat_history(
     ).isoformat()
 
     model_slug = "text-davinci-002-render"
+    plugin: bool = bool(chatgpt_conversation['plugin_ids'])
 
     id_to_m: dict[str, ChatGPTChatHistoryMessage] = {}
     for msg_id, message in messages.items():
@@ -95,6 +96,7 @@ def chatgpt_conversation_to_linear_chat_history(
         'update_time': update_time_iso,
         'create_time': create_time_iso,
         'model_slug': model_slug,
+        'plugins': plugin,
         'linear_messages': [m.content for m in linear_messages if m.content],
     }
 
