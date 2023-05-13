@@ -39,23 +39,26 @@ class ChatGPTChatHistoryMessage:
     # <|diff_marker|> if it's the final response to the user
     finish_details_marker: Literal['<|im_end|>', '<|diff_marker|>'] | None = None
 
-    chatgpt_response_message_type: Literal['request', 'tool', 'finish'] | None = None
+    response_message_type: Literal['request', 'tool', 'finish'] | None = None
+    message_type: Literal[
+        'system', 'user', 'non_plugin_response', 'request', 'tool', 'finish'
+    ] | None = None
     # like 'rentable_apartments.getApartments'
     # not none when role == tool
     tool_name: str | None = None
 
-    def set_chatgpt_response_message_type(self):
+    def set_response_message_type(self):
         if not self.plugin:
             return
         match self.role:
             case 'tool':
-                self.chatgpt_response_message_type = 'tool'
+                self.response_message_type = 'tool'
             case 'assistant':
                 match self.finish_details_marker:
                     case '<|im_end|>':
-                        self.chatgpt_response_message_type = 'request'
+                        self.response_message_type = 'request'
                     case '<|diff_marker|>':
-                        self.chatgpt_response_message_type = 'finish'
+                        self.response_message_type = 'finish'
 
 
 def chatgpt_conversation_to_linear_chat_history(
@@ -96,7 +99,7 @@ def chatgpt_conversation_to_linear_chat_history(
                     model_slug = m.model_slug
                 if finish_details := metadata.get('finish_details'):
                     m.finish_details_marker = finish_details['stop']
-                m.set_chatgpt_response_message_type()
+                m.set_response_message_type()
         else:
             m.role = None
             m.content = None
