@@ -16,4 +16,7 @@ update-conversations-json-and-workflow: update-conversations-json update-workflo
 cspell:
 	cspell --words-only --unique '{*.py,{**/*.{html,py,js,ts,css,md,yaml,yml,txt,code-snippets,ipynb},.github/**/*.{md,yaml,yml}}}' | LC_ALL='C' sort --ignore-case > project-words.txt
 
+get-5:
+	jq '.[0:5]' conversations.json > input.json
+
 .PHONY: *
