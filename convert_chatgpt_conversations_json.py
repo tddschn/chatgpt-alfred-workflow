@@ -22,7 +22,7 @@ class ChatGPTChatHistoryMessage:
     children_ids: list[str] = []
     parent: Union['ChatGPTChatHistoryMessage', None] = None
     children: list['ChatGPTChatHistoryMessage'] = []
-    role: str | None = None
+    role: Literal['system', 'assistant', 'user', 'tool'] | None = None
     content: str | None = None
 
     # None when role == user or system, not none when role == assistant
@@ -30,12 +30,32 @@ class ChatGPTChatHistoryMessage:
     # gpt-4: gpt-4
     model_slug: str = 'text-davinci-002-render'
 
+    plugin: bool = False
     # None, 'all', 'kayak.whatever' etc
     recipient: str | None = None
 
-    # <|im_end|> if it's a message to a tool
+    # <|im_end|> if it's a message to a tool (always json)
+    # tool response could be json or text
     # <|diff_marker|> if it's the final response to the user
     finish_details_marker: Literal['<|im_end|>', '<|diff_marker|>'] | None = None
+
+    chatgpt_response_message_type: Literal['request', 'tool', 'finish'] | None = None
+    # like 'rentable_apartments.getApartments'
+    # not none when role == tool
+    tool_name: str | None = None
+
+    def set_chatgpt_response_message_type(self):
+        if not self.plugin:
+            return
+        match self.role:
+            case 'tool':
+                self.chatgpt_response_message_type = 'tool'
+            case 'assistant':
+                match self.finish_details_marker:
+                    case '<|im_end|>':
+                        self.chatgpt_response_message_type = 'request'
+                    case '<|diff_marker|>':
+                        self.chatgpt_response_message_type = 'finish'
 
 
 def chatgpt_conversation_to_linear_chat_history(
@@ -54,7 +74,7 @@ def chatgpt_conversation_to_linear_chat_history(
     ).isoformat()
 
     model_slug = "text-davinci-002-render"
-    plugin: bool = bool(chatgpt_conversation['plugin_ids'])
+    plugin_enabled: bool = bool(chatgpt_conversation['plugin_ids'])
 
     id_to_m: dict[str, ChatGPTChatHistoryMessage] = {}
     for msg_id, message in messages.items():
@@ -66,6 +86,8 @@ def chatgpt_conversation_to_linear_chat_history(
         msg = message['message']
         if msg is not None:
             m.role = msg['author']['role']
+            if m.role == 'tool':
+                m.tool_name = msg['author']['name']
             m.content = msg['content']['parts'][0]
             m.recipient = msg['recipient']
             if metadata := msg.get('metadata'):
@@ -74,6 +96,7 @@ def chatgpt_conversation_to_linear_chat_history(
                     model_slug = m.model_slug
                 if finish_details := metadata.get('finish_details'):
                     m.finish_details_marker = finish_details['stop']
+                m.set_chatgpt_response_message_type()
         else:
             m.role = None
             m.content = None
@@ -106,7 +129,7 @@ def chatgpt_conversation_to_linear_chat_history(
         'update_time': update_time_iso,
         'create_time': create_time_iso,
         'model_slug': model_slug,
-        'plugins': plugin,
+        'plugin_enabled': plugin_enabled,
         'linear_messages': [m.content for m in linear_messages if m.content],
     }
 
