@@ -37,7 +37,9 @@ def get_rows() -> list[dict]:
 
 def search_key_for_rows(row: dict) -> str:
     return ' '.join(
-        x for _, x in row.items() if x and not _.startswith('non_key_')
+        x
+        for _, x in row.items()
+        if x and not _.startswith('non_key_') and isinstance(x, str)
     ).lower()
 
 
@@ -99,11 +101,11 @@ def main(wf: Workflow3):
             return message_preview
 
         match model:
-            case 'gpt-3.5-turbo':
+            case 'gpt-3.5-turbo' | 'gpt-3.5-turbo-mobile':
                 model_short = ''
                 model_shorthand = '3.5'
                 subtitle_prefix = date_short
-            case 'gpt-4':
+            case 'gpt-4' | 'gpt-4-mobile':
                 model_shorthand = '4'
                 model_short = 'GPT-4'
                 subtitle_prefix = f"GPT-4 | {date_short}"
@@ -112,7 +114,7 @@ def main(wf: Workflow3):
                 model_shorthand = 'Plugins'
                 model_short = 'Plugins'
                 subtitle_prefix = f"{model_shorthand} | {date_short}"
-            case 'gpt-4-plugins':
+            case 'gpt-4-plugins' | 'gpt-4-browsing':
                 model_shorthand = 'GPT-4 Plugins'
                 model_short = 'GPT-4 Plugins'
                 subtitle_prefix = f"{model_shorthand} | {date_short}"
