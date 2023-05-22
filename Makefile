@@ -8,10 +8,13 @@ update-conversations-json:
 	./update_conversations_json.sh
 	./generate_preview_files.py
 
+convert-conversations-json:
+	./convert_chatgpt_conversations_json.py
+
 workflow-delcache:
 	./alfred.py 'workflow:delcache'
 
-update-conversations-json-and-workflow: update-conversations-json update-workflow workflow-delcache
+update-conversations-json-and-workflow: update-conversations-json convert-conversations-json update-workflow workflow-delcache
 
 cspell:
 	cspell --words-only --unique '{*.py,{**/*.{html,py,js,ts,css,md,yaml,yml,txt,code-snippets,ipynb},.github/**/*.{md,yaml,yml}}}' | LC_ALL='C' sort --ignore-case > project-words.txt

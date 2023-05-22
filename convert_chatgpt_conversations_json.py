@@ -38,6 +38,7 @@ class ChatGPTChatHistoryMessage:
     # tool response could be json or text
     # <|diff_marker|> if it's the final response to the user
     finish_details_marker: Literal['<|im_end|>', '<|diff_marker|>'] | None = None
+    finish_details_type: Literal['stop', 'interrupted'] | None = None
 
     response_message_type: Literal['request', 'tool', 'finish'] | None = None
     message_type: Literal[
@@ -91,15 +92,19 @@ def chatgpt_conversation_to_linear_chat_history(
             m.role = msg['author']['role']
             if m.role == 'tool':
                 m.tool_name = msg['author']['name']
-            m.content = msg['content']['parts'][0]
+            if m_parts := msg['content'].get('parts'):
+                m.content = m_parts[0]
+            elif m_content := msg['content'].get('text'):
+                m.content = m_content
             m.recipient = msg['recipient']
             if metadata := msg.get('metadata'):
                 m.model_slug = metadata.get('model_slug')
                 if m.model_slug is not None:
                     model_slug = m.model_slug
                 if finish_details := metadata.get('finish_details'):
-                    m.finish_details_marker = finish_details['stop']
-                m.set_response_message_type()
+                    m.finish_details_marker = finish_details.get('stop', None)
+                    m.finish_details_type = finish_details.get('type', None)
+                m.set_response_message_type
         else:
             m.role = None
             m.content = None
