@@ -14,7 +14,9 @@ convert-conversations-json:
 workflow-delcache:
 	./alfred.py 'workflow:delcache'
 
-update-conversations-json-and-workflow: update-conversations-json convert-conversations-json update-workflow workflow-delcache
+regen-and-update-all: convert-conversations-json update-workflow workflow-delcache
+
+update-conversations-json-and-workflow: update-conversations-json update-workflow
 
 cspell:
 	cspell --words-only --unique '{*.py,{**/*.{html,py,js,ts,css,md,yaml,yml,txt,code-snippets,ipynb},.github/**/*.{md,yaml,yml}}}' | LC_ALL='C' sort --ignore-case > project-words.txt

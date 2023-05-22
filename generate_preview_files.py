@@ -10,6 +10,7 @@ from tqdm import tqdm
 import argparse
 from config import chatgpt_linear_conversations_json_path, generated_dir
 from utils import model_slug_to_model_name, chatgpt_conversation_id_to_url
+from alfred import get_model_short_subtitle_suffix_update_item3_kwargs
 
 
 def generate_preview_markdown(conversation: dict) -> str:
@@ -17,15 +18,18 @@ def generate_preview_markdown(conversation: dict) -> str:
     # date_short = iso_to_month_day(conversation['update_time'])
     date_short = conversation['update_time']
     model = model_slug_to_model_name(conversation['model_slug'])
-    match model:
-        case 'gpt-3.5-turbo':
-            model_short = ''
-        case 'gpt-4':
-            model_short = 'GPT-4'
-        case 'plugins':
-            model_short = 'Plugins'
-        case _:
-            model_short = model
+    # match model:
+    #     case 'gpt-3.5-turbo':
+    #         model_short = ''
+    #     case 'gpt-4':
+    #         model_short = 'GPT-4'
+    #     case 'plugins':
+    #         model_short = 'Plugins'
+    #     case _:
+    #         model_short = model
+    model_short, _ = get_model_short_subtitle_suffix_update_item3_kwargs(
+        model=model, date_short=date_short, item3_kwargs={}
+    )
     title_suffix = f"""{date_short}{f' ({model_short})' if model_short else ''}"""
 
     template = """

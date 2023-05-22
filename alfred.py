@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from pprint import pformat
 import json
 import sys
 from workflow import Workflow3
@@ -100,29 +99,12 @@ def main(wf: Workflow3):
                 ]
             return message_preview
 
-        match model:
-            case 'gpt-3.5-turbo' | 'gpt-3.5-turbo-mobile':
-                model_short = ''
-                model_shorthand = '3.5'
-                subtitle_prefix = date_short
-            case 'gpt-4' | 'gpt-4-mobile':
-                model_shorthand = '4'
-                model_short = 'GPT-4'
-                subtitle_prefix = f"GPT-4 | {date_short}"
-                item3_kwargs |= {'icon': str(gpt_4_icon_path)}
-            case 'plugins':
-                model_shorthand = 'Plugins'
-                model_short = 'Plugins'
-                subtitle_prefix = f"{model_shorthand} | {date_short}"
-            case 'gpt-4-plugins' | 'gpt-4-browsing':
-                model_shorthand = 'GPT-4 Plugins'
-                model_short = 'GPT-4 Plugins'
-                subtitle_prefix = f"{model_shorthand} | {date_short}"
-                item3_kwargs |= {'icon': str(gpt_4_plugins_icon_path)}
-            case _:
-                model_shorthand = model
-                model_short = model
-                subtitle_prefix = f"{model_shorthand} | {date_short}"
+        (
+            model_short,
+            subtitle_prefix,
+        ) = get_model_short_subtitle_suffix_update_item3_kwargs(
+            date_short, model, item3_kwargs
+        )
         title_suffix = f"""{date_short}{f' ({model_short})' if model_short else ''}"""
         row_title = row.get('title', '') or ''
         num_white_spaces = max(
@@ -187,6 +169,35 @@ def main(wf: Workflow3):
 
     # Send the results to Alfred as XML
     wf.send_feedback()
+
+
+def get_model_short_subtitle_suffix_update_item3_kwargs(
+    date_short: str, model: str, item3_kwargs: dict
+) -> tuple[str, str]:
+    match model:
+        case 'gpt-3.5-turbo' | 'gpt-3.5-turbo-mobile':
+            model_short = ''
+            model_shorthand = '3.5'
+            subtitle_prefix = date_short
+        case 'gpt-4' | 'gpt-4-mobile':
+            model_shorthand = '4'
+            model_short = 'GPT-4'
+            subtitle_prefix = f"GPT-4 | {date_short}"
+            item3_kwargs |= {'icon': str(gpt_4_icon_path)}
+        case 'plugins':
+            model_shorthand = 'Plugins'
+            model_short = 'Plugins'
+            subtitle_prefix = f"{model_shorthand} | {date_short}"
+        case 'gpt-4-plugins' | 'gpt-4-browsing':
+            model_shorthand = 'GPT-4 Plugins'
+            model_short = 'GPT-4 Plugins'
+            subtitle_prefix = f"{model_shorthand} | {date_short}"
+            item3_kwargs |= {'icon': str(gpt_4_plugins_icon_path)}
+        case _:
+            model_shorthand = model
+            model_short = model
+            subtitle_prefix = f"{model_shorthand} | {date_short}"
+    return model_short, subtitle_prefix
 
 
 if __name__ == '__main__':
