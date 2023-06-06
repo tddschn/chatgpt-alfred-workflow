@@ -1,8 +1,8 @@
 # ChatGPT Alfred Workflow
 
 [Alfred](https://www.alfredapp.com/) Workflow that imports ChatGPT [exported](https://help.openai.com/en/articles/7260999-how-do-i-export-my-chatgpt-history-and-data) `conversations.json` file  
-and provides a [`List Filter`](https://www.alfredapp.com/help/workflows/inputs/list-filter/) that let you do **full-text search** on your chat history,  
-supports **previewing conversations** (by using QuickLook on Markdown files generated from conversations)  
+and provides a [`List Filter`](https://www.alfredapp.com/help/workflows/inputs/list-filter/) that let you do [**full-text search**](#chat-history-full-text-search)  and [**metadata filtering**](#metadata-filtering) on your chat history,  
+supports [**previewing conversations**](#preview-of-conversations--opening-on-chatgpt--typingmind) (by using QuickLook on Markdown files generated from conversations)  
 and opening them on ChatGPT or TypingMind.
 
 - [ChatGPT Alfred Workflow](#chatgpt-alfred-workflow)
