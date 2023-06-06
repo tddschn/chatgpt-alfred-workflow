@@ -34,6 +34,7 @@ def generate_preview_markdown(conversation: dict) -> str:
 
     template = """
     <link rel="stylesheet" href="../css/markdown_preview.css">
+
     # {title}
 
     [ChatGPT]({chatgpt_url})
