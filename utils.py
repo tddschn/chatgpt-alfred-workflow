@@ -13,6 +13,7 @@ model_slug_to_model_name_map = {
     'gpt-4-mobile': 'gpt-4',
     'gpt-4-plugins': 'gpt-4-plugins',
     'gpt-4-browsing': 'gpt-4-browsing',
+    'gpt-4-code-interpreter': 'gpt-4-code-interpreter',
     'text-davinci-002-plugins': 'plugins',
 }
 
