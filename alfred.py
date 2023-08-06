@@ -193,7 +193,7 @@ def get_model_short_subtitle_suffix_update_item3_kwargs(
             model_short = 'GPT-4 Plugins'
             subtitle_prefix = f"{model_shorthand} | {date_short}"
             item3_kwargs |= {'icon': str(gpt_4_plugins_icon_path)}
-        case 'gpt-4-code-interpreter' | 'gpt-4-code-interpreter':
+        case 'gpt-4-code-interpreter':
             model_shorthand = 'GPT-4 CI'
             model_short = 'GPT-4 Code Int'
             subtitle_prefix = f"{model_shorthand} | {date_short}"
