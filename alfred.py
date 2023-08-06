@@ -13,6 +13,7 @@ from config import (
     alfred_workflow_cache_key,
     gpt_4_icon_path,
     gpt_4_plugins_icon_path,
+    gpt_4_code_interpreter_icon_path,
 )
 from utils import (
     model_slug_to_model_name,
@@ -197,7 +198,7 @@ def get_model_short_subtitle_suffix_update_item3_kwargs(
             model_shorthand = 'GPT-4 CI'
             model_short = 'GPT-4 Code Int'
             subtitle_prefix = f"{model_shorthand} | {date_short}"
-            item3_kwargs |= {'icon': str(gpt_4_plugins_icon_path)}
+            item3_kwargs |= {'icon': str(gpt_4_code_interpreter_icon_path)}
         case _:
             model_shorthand = model
             model_short = model
