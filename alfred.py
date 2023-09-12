@@ -9,6 +9,7 @@ from config import (
     message_preview_len,
     alfred_subtitle_max_length,
     alfred_workflow_cache_key,
+    pre_computed_alfred_json,
 )
 from utils import (
     search_and_extract_preview,
@@ -46,11 +47,95 @@ def get_rows() -> list[dict]:
 
 
 def main(wf: Workflow3):
-    if len(wf.args):
-        query = wf.args[0]
-    else:
-        query = None
-    rows = wf.cached_data(alfred_workflow_cache_key, get_rows, max_age=3600)
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        description='List, search and preview your ChatGPT conversations',
+    )
+    parser.add_argument(
+        '-g', '--generate-alfred-json', action='store_true', help='Generate Alfred JSON'
+    )
+    parser.add_argument('query', nargs='?', default=None)
+    args = parser.parse_args(wf.args)
+    query = args.query
+    rows: list[dict]
+    rows = wf.cached_data(alfred_workflow_cache_key, get_rows, max_age=3600)  # type: ignore
+
+    def prepare_wf_items(query: str | None = None):
+        for row in rows:
+            if query:
+
+                def get_message_preview(preview_len: int = message_preview_len) -> str:
+                    if query:
+                        message_preview = search_and_extract_preview(
+                            query,
+                            row['concatenated_messages'].strip(),
+                            message_preview_len,
+                            False,
+                        )
+                    else:
+                        message_preview = row['concatenated_messages'].strip()[
+                            :message_preview_len
+                        ]
+                    return message_preview
+
+                message_preview = get_message_preview(alfred_subtitle_max_length)
+            else:
+                message_preview = row['_message_preview']
+            item = Item3(
+                title=row['_title'],
+                subtitle=f"{message_preview}",
+                quicklookurl=row['_quicklookurl'],
+                arg=row['_chatgpt_url'],
+                valid=True,
+                **row['_item3_kwargs'],
+            )
+            item.add_modifier(
+                'cmd',
+                subtitle='Open on TypingMind',
+                arg=row['_typingmind_url'],
+                valid=True,
+                **row['_item3_kwargs'],
+            )
+            # item.add_modifier(
+            #     'alt',
+            #     subtitle='Search Google',
+            #     arg=row['non_key_google_search_url'],
+            #     valid=True,
+            # )
+            # item.add_modifier(
+            #     'shift', subtitle='Search 133', arg=row['non_key_133_url'], valid=True
+            # )
+            # item.add_modifier(
+            #     'ctrl',
+            #     subtitle='View row',
+            #     arg=pformat(
+            #         {
+            #             k: v
+            #             for k, v in row.items()
+            #             if v
+            #             and v not in ('USD', 'CAD')
+            #             and not re.match(r'(/|http|0.00)', v)
+            #         }
+            #     ),
+            #     valid=True,
+            # )
+            # from icecream import ic
+
+            # ic(row)
+            # wf.add_item(item)
+            wf._items.append(item)
+
+    if args.generate_alfred_json:
+        prepare_wf_items()
+        from contextlib import redirect_stdout
+
+        with open(pre_computed_alfred_json, 'w') as f:
+            with redirect_stdout(f):
+                wf.send_feedback()
+        print(f'Generated {pre_computed_alfred_json}')
+        return
     if not rows:
         wf.add_item('No results found')
         wf.send_feedback()
@@ -62,75 +147,6 @@ def main(wf: Workflow3):
         wf.add_item('No matching results found')
         wf.send_feedback()
         return
-    for row in rows:
-
-        def get_message_preview(preview_len: int = message_preview_len) -> str:
-            if query:
-                message_preview = search_and_extract_preview(
-                    query,
-                    row['concatenated_messages'].strip(),
-                    message_preview_len,
-                    False,
-                )
-            else:
-                message_preview = row['concatenated_messages'].strip()[
-                    :message_preview_len
-                ]
-            return message_preview
-
-        message_preview = get_message_preview(alfred_subtitle_max_length)
-        item = Item3(
-            title=row['_title'],
-            # subtitle=f"{subtitle_prefix} | {message_preview}",
-            subtitle=f"{message_preview}",
-            # subtitle=' | '.join(
-            #     (
-            #         model_shorthand,
-            #         date_short,
-            #         message_preview.replace('\n', ' '),
-            #     )
-            # ),
-            quicklookurl=row['_quicklookurl'],
-            arg=row['_chatgpt_url'],
-            valid=True,
-            **row['_item3_kwargs'],
-        )
-        item.add_modifier(
-            'cmd',
-            subtitle='Open on TypingMind',
-            arg=row['_typingmind_url'],
-            valid=True,
-            **row['_item3_kwargs'],
-        )
-        # item.add_modifier(
-        #     'alt',
-        #     subtitle='Search Google',
-        #     arg=row['non_key_google_search_url'],
-        #     valid=True,
-        # )
-        # item.add_modifier(
-        #     'shift', subtitle='Search 133', arg=row['non_key_133_url'], valid=True
-        # )
-        # item.add_modifier(
-        #     'ctrl',
-        #     subtitle='View row',
-        #     arg=pformat(
-        #         {
-        #             k: v
-        #             for k, v in row.items()
-        #             if v
-        #             and v not in ('USD', 'CAD')
-        #             and not re.match(r'(/|http|0.00)', v)
-        #         }
-        #     ),
-        #     valid=True,
-        # )
-        # from icecream import ic
-
-        # ic(row)
-        # wf.add_item(item)
-        wf._items.append(item)
-
     # Send the results to Alfred as XML
     wf.send_feedback()
 

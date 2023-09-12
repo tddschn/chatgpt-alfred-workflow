@@ -28,4 +28,5 @@ gpt_4_code_interpreter_icon_path = assets_dir / 'gpt-4-code-interpreter.png'
 alfred_workflow_cache_key = 'chatgpt-alfred-workflow'
 
 pre_computed_rows_json = generated_dir / 'pre_computed_rows.json'
+pre_computed_alfred_json = generated_dir / 'pre_computed_alfred.json'
 pre_computed_rows_msgpack = generated_dir / 'pre_computed_rows.msgpack'

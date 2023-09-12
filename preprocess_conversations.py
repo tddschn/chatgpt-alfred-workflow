@@ -13,6 +13,7 @@ from config import (
     chatgpt_linear_conversations_json_path,
     alfred_title_max_length,
     generated_dir,
+    message_preview_len,
 )
 from utils import (
     model_slug_to_model_name,
@@ -75,6 +76,9 @@ def get_and_process_rows() -> list[dict]:
         row['_typingmind_url'] = typingmind_url
         row['_item3_kwargs'] = item3_kwargs
         row['_search_key'] = search_key_for_rows(row)
+        message_preview = row['concatenated_messages'].strip()[:message_preview_len]
+        row['_message_preview'] = message_preview
+
     return rows
 
 
