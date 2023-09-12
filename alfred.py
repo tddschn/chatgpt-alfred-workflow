@@ -23,24 +23,6 @@ from utils import (
 )
 
 
-def get_rows() -> list[dict]:
-    linear_conversations: list[dict] = json.loads(
-        chatgpt_linear_conversations_json_path.read_text()
-    )
-    for conversation in linear_conversations:
-        conversation['concatenated_messages'] = '\n---\n'.join(
-            conversation.pop('linear_messages')
-        )
-        conversation['model'] = model_slug_to_model_name(conversation.pop('model_slug'))
-    return linear_conversations
-
-
-def search_key_for_rows(row: dict) -> str:
-    return ' '.join(
-        x
-        for _, x in row.items()
-        if x and not _.startswith('non_key_') and isinstance(x, str)
-    ).lower()
 
 
 def filter_query(rows: list[dict], query: str) -> list[dict]:
@@ -80,11 +62,6 @@ def main(wf: Workflow3):
         wf.send_feedback()
         return
     for row in rows:
-        date_short = iso_to_month_day(row['update_time'])
-        model = row['model']
-        chatgpt_url = chatgpt_conversation_id_to_url(row['id'], 'chatgpt')
-        typingmind_url = chatgpt_conversation_id_to_url(row['id'], 'typingmind')
-        item3_kwargs = {}
 
         def get_message_preview(preview_len: int = message_preview_len) -> str:
             if query:
@@ -100,24 +77,9 @@ def main(wf: Workflow3):
                 ]
             return message_preview
 
-        (
-            model_short,
-            subtitle_prefix,
-        ) = get_model_short_subtitle_suffix_update_item3_kwargs(
-            date_short, model, item3_kwargs
-        )
-        title_suffix = f"""{date_short}{f' ({model_short})' if model_short else ''}"""
-        row_title = row.get('title', '') or ''
-        num_white_spaces = max(
-            2, alfred_title_max_length - len(row_title) - len(title_suffix)
-        )
-        title = f"""{row_title}{' ' * num_white_spaces}{title_suffix}"""
-        subtitle_remaining_length = (
-            alfred_subtitle_max_length - len(subtitle_prefix) - 3
-        )
         message_preview = get_message_preview(alfred_subtitle_max_length)
         item = Item3(
-            title=title,
+            title=row['_title'],
             # subtitle=f"{subtitle_prefix} | {message_preview}",
             subtitle=f"{message_preview}",
             # subtitle=' | '.join(
@@ -127,17 +89,17 @@ def main(wf: Workflow3):
             #         message_preview.replace('\n', ' '),
             #     )
             # ),
-            quicklookurl=str(generated_dir / f"{row['id']}.md"),
-            arg=chatgpt_url,
+            quicklookurl=row['_quicklookurl'],
+            arg=row['_chatgpt_url'],
             valid=True,
-            **item3_kwargs,
+            **row['_item3_kwargs'],
         )
         item.add_modifier(
             'cmd',
             subtitle='Open on TypingMind',
-            arg=typingmind_url,
+            arg=row['_typingmind_url'],
             valid=True,
-            **item3_kwargs,
+            **row['_item3_kwargs'],
         )
         # item.add_modifier(
         #     'alt',
@@ -170,40 +132,6 @@ def main(wf: Workflow3):
 
     # Send the results to Alfred as XML
     wf.send_feedback()
-
-
-def get_model_short_subtitle_suffix_update_item3_kwargs(
-    date_short: str, model: str, item3_kwargs: dict
-) -> tuple[str, str]:
-    match model:
-        case 'gpt-3.5-turbo' | 'gpt-3.5-turbo-mobile':
-            model_short = ''
-            model_shorthand = '3.5'
-            subtitle_prefix = date_short
-        case 'gpt-4' | 'gpt-4-mobile':
-            model_shorthand = '4'
-            model_short = 'GPT-4'
-            subtitle_prefix = f"GPT-4 | {date_short}"
-            item3_kwargs |= {'icon': str(gpt_4_icon_path)}
-        case 'plugins':
-            model_shorthand = 'Plugins'
-            model_short = 'Plugins'
-            subtitle_prefix = f"{model_shorthand} | {date_short}"
-        case 'gpt-4-plugins' | 'gpt-4-browsing':
-            model_shorthand = 'GPT-4 Plugins'
-            model_short = 'GPT-4 Plugins'
-            subtitle_prefix = f"{model_shorthand} | {date_short}"
-            item3_kwargs |= {'icon': str(gpt_4_plugins_icon_path)}
-        case 'gpt-4-code-interpreter':
-            model_shorthand = 'GPT-4 CI'
-            model_short = 'GPT-4 Code Int'
-            subtitle_prefix = f"{model_shorthand} | {date_short}"
-            item3_kwargs |= {'icon': str(gpt_4_code_interpreter_icon_path)}
-        case _:
-            model_shorthand = model
-            model_short = model
-            subtitle_prefix = f"{model_shorthand} | {date_short}"
-    return model_short, subtitle_prefix
 
 
 if __name__ == '__main__':

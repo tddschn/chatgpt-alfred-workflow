@@ -2,6 +2,18 @@ from datetime import datetime
 from functools import cache
 from typing import Literal
 
+from config import (
+    chatgpt_linear_conversations_json_path,
+    message_preview_len,
+    alfred_subtitle_max_length,
+    alfred_title_max_length,
+    generated_dir,
+    alfred_workflow_cache_key,
+    gpt_4_icon_path,
+    gpt_4_plugins_icon_path,
+    gpt_4_code_interpreter_icon_path,
+)
+
 model_slug_to_model_name_map = {
     # gpt-3.5-turbo: text-davinci-002-render-sha
     # gpt-4: gpt-4
@@ -149,3 +161,37 @@ def find_last_added_file(
         raise ValueError(
             f"No files found in {dir_path} with pattern {glob_pattern} (recursive={recursive})"
         )
+
+
+def get_model_short_subtitle_suffix_update_item3_kwargs(
+    date_short: str, model: str, item3_kwargs: dict
+) -> tuple[str, str]:
+    match model:
+        case 'gpt-3.5-turbo' | 'gpt-3.5-turbo-mobile':
+            model_short = ''
+            model_shorthand = '3.5'
+            subtitle_prefix = date_short
+        case 'gpt-4' | 'gpt-4-mobile':
+            model_shorthand = '4'
+            model_short = 'GPT-4'
+            subtitle_prefix = f"GPT-4 | {date_short}"
+            item3_kwargs |= {'icon': str(gpt_4_icon_path)}
+        case 'plugins':
+            model_shorthand = 'Plugins'
+            model_short = 'Plugins'
+            subtitle_prefix = f"{model_shorthand} | {date_short}"
+        case 'gpt-4-plugins' | 'gpt-4-browsing':
+            model_shorthand = 'GPT-4 Plugins'
+            model_short = 'GPT-4 Plugins'
+            subtitle_prefix = f"{model_shorthand} | {date_short}"
+            item3_kwargs |= {'icon': str(gpt_4_plugins_icon_path)}
+        case 'gpt-4-code-interpreter':
+            model_shorthand = 'GPT-4 CI'
+            model_short = 'GPT-4 Code Int'
+            subtitle_prefix = f"{model_shorthand} | {date_short}"
+            item3_kwargs |= {'icon': str(gpt_4_code_interpreter_icon_path)}
+        case _:
+            model_shorthand = model
+            model_short = model
+            subtitle_prefix = f"{model_shorthand} | {date_short}"
+    return model_short, subtitle_prefix

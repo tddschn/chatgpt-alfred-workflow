@@ -3,7 +3,6 @@
 
 from pathlib import Path
 
-from utils import model_slug_to_model_name
 
 downloads_dir = Path.home() / 'Downloads'
 
@@ -27,3 +26,5 @@ gpt_4_plugins_icon_path = assets_dir / 'gpt-4-plugins-purple.png'
 gpt_4_code_interpreter_icon_path = assets_dir / 'gpt-4-code-interpreter.png'
 
 alfred_workflow_cache_key = 'chatgpt-alfred-workflow'
+
+pre_computed_rows_json = generated_dir / 'pre_computed_rows.json'
