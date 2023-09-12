@@ -140,6 +140,9 @@ def main(wf: Workflow3):
         wf.add_item('No results found')
         wf.send_feedback()
         return
+    if not query:
+        print(pre_computed_alfred_json.read_text())
+        return
     if query:
         rows = filter_query(rows, query)
 
@@ -147,6 +150,7 @@ def main(wf: Workflow3):
         wf.add_item('No matching results found')
         wf.send_feedback()
         return
+    prepare_wf_items()
     # Send the results to Alfred as XML
     wf.send_feedback()
 
