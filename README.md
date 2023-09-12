@@ -12,7 +12,7 @@ and opening them on ChatGPT or TypingMind.
     - [Chat history full text search](#chat-history-full-text-search)
     - [Metadata filtering](#metadata-filtering)
     - [Preview of conversations \& Opening on ChatGPT / TypingMind](#preview-of-conversations--opening-on-chatgpt--typingmind)
-    - [Searchable Fields:](#searchable-fields)
+    - [Searchable Fields](#searchable-fields)
   - [How it works](#how-it-works)
 
 ## Demo
@@ -77,7 +77,7 @@ Press <kbd>Enter</kbd> or click on the selected entry to open the conversation o
  press <kbd>Shift</kbd> to preview the conversation in Alfred.
 
 
-### Searchable Fields:
+### Searchable Fields
 
 ```json
   {
