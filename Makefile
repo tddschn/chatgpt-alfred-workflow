@@ -55,5 +55,5 @@ help:
 
 # all target except the $() ones
 # hardcode this
-.PHONY: update-workflow update-repo-from-workflow update-conversations-json convert-conversations-json workflow-delcache regen-and-update-all update-conversations-json-and-workflow cspell get-5 get-length lint help pre-process
+.PHONY: *
 
