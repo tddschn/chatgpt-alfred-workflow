@@ -9,6 +9,7 @@ import argparse
 import json
 from config import (
     pre_computed_rows_json,
+    pre_computed_rows_msgpack,
     chatgpt_linear_conversations_json_path,
     alfred_title_max_length,
     generated_dir,
@@ -95,6 +96,13 @@ def main():
     rows = get_and_process_rows()
     pre_computed_rows_json.write_text(json.dumps(rows, indent=2, ensure_ascii=False))
     print(f'Wrote pre-computed rows to {pre_computed_rows_json}')
+    try:
+        import msgpack
+
+        pre_computed_rows_msgpack.write_bytes(msgpack.packb(rows))  # type: ignore
+        print(f'Wrote pre-computed rows to {pre_computed_rows_msgpack}')
+    except ImportError:
+        pass
 
 
 if __name__ == '__main__':

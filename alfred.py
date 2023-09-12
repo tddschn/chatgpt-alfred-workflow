@@ -5,6 +5,7 @@ from workflow import Workflow3
 from workflow.workflow3 import Item3
 from config import (
     pre_computed_rows_json,
+    pre_computed_rows_msgpack,
     message_preview_len,
     alfred_subtitle_max_length,
     alfred_workflow_cache_key,
@@ -37,7 +38,7 @@ def get_rows() -> list[dict]:
     try:
         import msgpack
 
-        return msgpack.unpackb(pre_computed_rows_json.read_bytes())
+        return msgpack.unpackb(pre_computed_rows_msgpack.read_bytes())
     except ImportError:
         import json
 
