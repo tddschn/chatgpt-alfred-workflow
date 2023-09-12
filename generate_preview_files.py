@@ -9,8 +9,11 @@ from textwrap import dedent
 from tqdm import tqdm
 import argparse
 from config import chatgpt_linear_conversations_json_path, generated_dir
-from utils import model_slug_to_model_name, chatgpt_conversation_id_to_url
-from alfred import get_model_short_subtitle_suffix_update_item3_kwargs
+from utils import (
+    model_slug_to_model_name,
+    chatgpt_conversation_id_to_url,
+    get_model_short_subtitle_suffix_update_item3_kwargs,
+)
 
 
 def generate_preview_markdown(conversation: dict) -> str:
