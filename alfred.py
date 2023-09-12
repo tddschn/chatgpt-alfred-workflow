@@ -59,6 +59,9 @@ def main(wf: Workflow3):
     parser.add_argument('query', nargs='?', default=None)
     args = parser.parse_args(wf.args)
     query = args.query
+    if not query:
+        print(pre_computed_alfred_json.read_text())
+        return
     rows: list[dict]
     rows = wf.cached_data(alfred_workflow_cache_key, get_rows, max_age=3600)  # type: ignore
 
@@ -139,9 +142,6 @@ def main(wf: Workflow3):
     if not rows:
         wf.add_item('No results found')
         wf.send_feedback()
-        return
-    if not query:
-        print(pre_computed_alfred_json.read_text())
         return
     if query:
         rows = filter_query(rows, query)
