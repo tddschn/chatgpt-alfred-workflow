@@ -41,14 +41,17 @@ get-length:
 lint:
 	ruff check . --fix
 
-$(PRE_COMPUTED_ROWS_FILES): $(LINEAR_CONVERSATIONS_FILE)
+# $(PRE_COMPUTED_ROWS_FILES): $(LINEAR_CONVERSATIONS_FILE)
+# 	./preprocess_conversations.py
+
+
+# $(PRE_COMPUTED_ALFRED_JSON_FILE): $(PRE_COMPUTED_ROWS_FILES)
+# 	./alfred.py -g
+
+# pre-process: $(PRE_COMPUTED_ROWS_FILES) $(PRE_COMPUTED_ALFRED_JSON_FILE) ## pre-process linear-conversations.json for Alfred to speed things up
+pre-process: ## pre-process linear-conversations.json for Alfred to speed things up
 	./preprocess_conversations.py
-
-
-$(PRE_COMPUTED_ALFRED_JSON_FILE): $(PRE_COMPUTED_ROWS_FILES)
 	./alfred.py -g
-
-pre-process: $(PRE_COMPUTED_ROWS_FILES) $(PRE_COMPUTED_ALFRED_JSON_FILE) ## pre-process linear-conversations.json for Alfred to speed things up
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
