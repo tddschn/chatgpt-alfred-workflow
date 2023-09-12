@@ -1,14 +1,11 @@
+import os
+import platform
+from pathlib import Path
 from datetime import datetime
 from functools import cache
 from typing import Literal
 
 from config import (
-    chatgpt_linear_conversations_json_path,
-    message_preview_len,
-    alfred_subtitle_max_length,
-    alfred_title_max_length,
-    generated_dir,
-    alfred_workflow_cache_key,
     gpt_4_icon_path,
     gpt_4_plugins_icon_path,
     gpt_4_code_interpreter_icon_path,
@@ -109,11 +106,6 @@ def search_and_extract_preview(
         return message[start_index:end_index]
     else:
         return ''
-
-
-import os
-import platform
-from pathlib import Path
 
 
 def get_creation_time(file_path: os.PathLike) -> float | int:

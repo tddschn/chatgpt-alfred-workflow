@@ -7,22 +7,14 @@ Purpose: Pre-compute attributes and other data for the conversations
 
 import argparse
 import json
-from pathlib import Path
 from config import (
     pre_computed_rows_json,
     chatgpt_linear_conversations_json_path,
-    message_preview_len,
-    alfred_subtitle_max_length,
     alfred_title_max_length,
     generated_dir,
-    alfred_workflow_cache_key,
-    gpt_4_icon_path,
-    gpt_4_plugins_icon_path,
-    gpt_4_code_interpreter_icon_path,
 )
 from utils import (
     model_slug_to_model_name,
-    search_and_extract_preview,
     chatgpt_conversation_id_to_url,
     iso_to_month_day,
     get_model_short_subtitle_suffix_update_item3_kwargs,
@@ -99,7 +91,7 @@ def get_args():
 def main():
     """Make a jazz noise here"""
 
-    args = get_args()
+    get_args()
     rows = get_and_process_rows()
     pre_computed_rows_json.write_text(json.dumps(rows, indent=2, ensure_ascii=False))
     print(f'Wrote pre-computed rows to {pre_computed_rows_json}')

@@ -1,38 +1,27 @@
 #!/usr/bin/env python3
 
-import json
 import sys
 from workflow import Workflow3
 from workflow.workflow3 import Item3
 from config import (
-    chatgpt_linear_conversations_json_path,
+    pre_computed_rows_json,
     message_preview_len,
     alfred_subtitle_max_length,
-    alfred_title_max_length,
-    generated_dir,
     alfred_workflow_cache_key,
-    gpt_4_icon_path,
-    gpt_4_plugins_icon_path,
-    gpt_4_code_interpreter_icon_path,
 )
 from utils import (
-    model_slug_to_model_name,
     search_and_extract_preview,
-    chatgpt_conversation_id_to_url,
-    iso_to_month_day,
 )
-
-
 
 
 def filter_query(rows: list[dict], query: str) -> list[dict]:
     new_rows = []
     for row in rows:
-        long_str = search_key_for_rows(row)
+        long_str = row['_search_key']
         for subquery in query.lower().split('|'):
             if '=' in subquery:
                 k, _, v = subquery.partition('=')
-                if not k in row:
+                if k not in row:
                     break
                 if v.strip().lower() not in row[k].lower():
                     break
@@ -42,6 +31,17 @@ def filter_query(rows: list[dict], query: str) -> list[dict]:
         else:
             new_rows.append(row)
     return new_rows
+
+
+def get_rows() -> list[dict]:
+    try:
+        import msgpack
+
+        return msgpack.unpackb(pre_computed_rows_json.read_bytes())
+    except ImportError:
+        import json
+
+        return json.loads(pre_computed_rows_json.read_text())
 
 
 def main(wf: Workflow3):

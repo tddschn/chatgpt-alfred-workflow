@@ -6,7 +6,6 @@ Purpose: Copy the conversations.json latest downloaded ChatGPT data export to de
 """
 
 import argparse
-from pathlib import Path
 from config import (
     chatgpt_exported_conversations_json_path,
     downloads_dir,
@@ -31,7 +30,7 @@ def get_args():
 def main():
     """Make a jazz noise here"""
 
-    args = get_args()
+    get_args()
     zip_file_path = find_last_added_file(
         downloads_dir,
         chatgpt_data_export_zip_glob_pattern,

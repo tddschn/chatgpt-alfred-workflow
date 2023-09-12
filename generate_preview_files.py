@@ -77,7 +77,7 @@ def get_args():
 def main():
     """Make a jazz noise here"""
 
-    args = get_args()
+    get_args()
     import json
 
     linear_conversations: list[dict] = json.loads(
