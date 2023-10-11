@@ -34,5 +34,7 @@ pre_computed_rows_msgpack = generated_dir / 'pre_computed_rows.msgpack'
 
 
 # cSpell:disable
-dalle_non_sense_messages = r'DALL·E returned some images. They are already displayed to the user. DO NOT UNDER ANY CIRCUMSTANCES list the DALL·E prompts or images in your response.'
+dalle_non_sense_messages = {
+    r'DALL·E returned some images. They are already displayed to the user. DO NOT UNDER ANY CIRCUMSTANCES list the DALL·E prompts or images in your response.'
+}
 # cSpell:enable
