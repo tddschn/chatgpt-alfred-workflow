@@ -32,6 +32,11 @@ get-5:
 	@# just for testing purposes
 	jq '.[0:5]' conversations.json > input.json
 	./convert_chatgpt_conversations_json.py -i input.json -o converted.json
+	
+get-20-raw:
+	@# just for testing purposes
+	jq '.[0:20]' conversations.json > raw20.json
+	# ./convert_chatgpt_conversations_json.py -i input.json -o converted.json
 
 get-length:
 	<conversations.json jq 'keys | length'

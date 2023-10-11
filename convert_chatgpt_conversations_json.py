@@ -13,6 +13,7 @@ from utils import date_from_chatgpt_unix_timestamp
 from config import (
     chatgpt_exported_conversations_json_path,
     chatgpt_linear_conversations_json_path,
+    dalle_non_sense_messages,
 )
 
 
@@ -23,6 +24,7 @@ class ChatGPTChatHistoryMessage:
     parent: Union['ChatGPTChatHistoryMessage', None] = None
     children: list['ChatGPTChatHistoryMessage'] = []
     role: Literal['system', 'assistant', 'user', 'tool'] | None = None
+    content_type: Literal['text', 'multimodal_text'] | None = None
     content: str | None = None
 
     # None when role == user or system, not none when role == assistant
@@ -88,7 +90,13 @@ def chatgpt_conversation_to_linear_chat_history(
         m.children_ids = message['children']
         id_to_m[msg_id] = m
         msg = message['message']
+
         if msg is not None:
+            m.content_type = msg['content']['content_type']
+            if m.content_type == 'multimodal_text':
+                # dalle output
+                # images on azure, sigs in url, generated upon requests
+                continue
             m.role = msg['author']['role']
             if m.role == 'tool':
                 m.tool_name = msg['author']['name']
@@ -101,6 +109,21 @@ def chatgpt_conversation_to_linear_chat_history(
                 m.model_slug = metadata.get('model_slug')
                 if m.model_slug is not None:
                     model_slug = m.model_slug
+                    if model_slug == 'gpt-4-dalle':
+                        # the image prompts, or 'DALL·E returned some images. They are already displayed to the user. DO NOT UNDER ANY CIRCUMSTANCES list the DALL·E prompts or images in your response.'
+                        # assert m.content
+                        # if m.content.startswith('{'):
+                        #     # m.content = json.loads(m.content)
+                        #     m.content = '\n'.join(
+                        #         [
+                        #             '```json',
+                        #             m.content,
+                        #             '```',
+                        #         ]
+                        #     )
+                        if m.content and m.content in dalle_non_sense_messages:
+                            m.content = None
+                            continue
                 if finish_details := metadata.get('finish_details'):
                     m.finish_details_marker = finish_details.get('stop', None)
                     m.finish_details_type = finish_details.get('type', None)

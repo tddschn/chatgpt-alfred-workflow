@@ -71,7 +71,7 @@ def get_and_process_rows() -> list[dict]:
         # )
         # message_preview = get_message_preview(alfred_subtitle_max_length)
         row['_title'] = title
-        row['_quicklookurl'] = (str(generated_dir / f"{row['id']}.md"),)
+        row['_quicklookurl'] = str(generated_dir / f"{row['id']}.md")
         row['_chatgpt_url'] = chatgpt_url
         row['_typingmind_url'] = typingmind_url
         row['_item3_kwargs'] = item3_kwargs

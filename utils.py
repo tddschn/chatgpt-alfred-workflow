@@ -24,6 +24,7 @@ model_slug_to_model_name_map = {
     'gpt-4-browsing': 'gpt-4-browsing',
     'gpt-4-code-interpreter': 'gpt-4-code-interpreter',
     'text-davinci-002-plugins': 'plugins',
+    'gpt-4-dalle': 'dalle',
 }
 
 
@@ -182,6 +183,11 @@ def get_model_short_subtitle_suffix_update_item3_kwargs(
             model_short = 'GPT-4 Code Int'
             subtitle_prefix = f"{model_shorthand} | {date_short}"
             item3_kwargs |= {'icon': str(gpt_4_code_interpreter_icon_path)}
+        case 'dalle':
+            model_shorthand = 'DALL·E'
+            model_short = 'DALL·E'
+            subtitle_prefix = f"{model_shorthand} | {date_short}"
+            item3_kwargs |= {'icon': str(gpt_4_icon_path)}
         case _:
             model_shorthand = model
             model_short = model
