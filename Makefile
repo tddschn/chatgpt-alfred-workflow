@@ -41,6 +41,9 @@ get-20-raw:
 get-length:
 	<conversations.json jq 'keys | length'
 
+get-linear-conversations-without-linear-messages:
+	jq 'map(del(.linear_messages))' linear_conversations.json > linear_conversations_without_linear_messages.json
+
 .DEFAULT_GOAL := help
 
 lint:
