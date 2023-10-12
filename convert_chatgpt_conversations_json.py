@@ -93,15 +93,23 @@ def chatgpt_conversation_to_linear_chat_history(
 
         if msg is not None:
             m.content_type = msg['content']['content_type']
-            if m.content_type == 'multimodal_text':
-                # dalle output
-                # images on azure, sigs in url, generated upon requests
-                continue
+            # if m.content_type == 'multimodal_text':
+            #     # dalle output or image input
+            #     # images on azure, sigs in url, generated upon requests
+            #     if
+            #     continue
             m.role = msg['author']['role']
             if m.role == 'tool':
                 m.tool_name = msg['author']['name']
             if m_parts := msg['content'].get('parts'):
-                m.content = m_parts[0]
+                m.content = m_parts[-1]
+                if m.content_type == 'multimodal_text':
+                    if isinstance(m.content, str):
+                        # image input prompt
+                        pass
+                    else:
+                        # dalle image output
+                        m.content = None
             elif m_content := msg['content'].get('text'):
                 m.content = m_content
             m.recipient = msg['recipient']
