@@ -41,8 +41,13 @@ def main():
         chatgpt_data_export_zip_glob_pattern,
         regex_pattern=chatgpt_data_export_zip_regex_pattern,
     )
-    zip_file_extracted_dir = (x.parent / x.stem for x in export_data_archive_paths)
+    # zip_file_extracted_dir = (x.parent / x.stem for x in export_data_archive_paths)
 
+    zip_file_extracted_dir = find_files(
+        downloads_dir,
+        chatgpt_data_export_zip_glob_pattern.removesuffix('.zip'),
+        regex_pattern=chatgpt_data_export_zip_regex_pattern.removesuffix('.zip'),
+    )
     # print the paths to be removed, ask for confirmation, then remove if confirmed
 
     f1, f2 = tee(export_data_archive_paths)
