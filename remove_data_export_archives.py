@@ -9,7 +9,6 @@ import argparse
 from itertools import tee
 import sys
 from config import (
-    chatgpt_exported_conversations_json_path,
     downloads_dir,
     chatgpt_data_export_zip_regex_pattern,
     chatgpt_data_export_zip_glob_pattern,
