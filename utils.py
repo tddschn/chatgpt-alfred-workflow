@@ -3,7 +3,7 @@ import platform
 from pathlib import Path
 from datetime import datetime
 from functools import cache
-from typing import Literal
+from typing import Iterable, Literal
 
 from config import (
     gpt_4_icon_path,
@@ -134,6 +134,22 @@ def find_last_added_file(
     :param recursive: Search recursively.
     :return: Path to the last added file.
     """
+    files = find_files(dir_path, glob_pattern, recursive, regex_pattern)
+    try:
+        last_added_file = max(files, key=get_creation_time)
+        return last_added_file
+    except:
+        raise ValueError(
+            f"No files found in {dir_path} with pattern {glob_pattern} (recursive={recursive})"
+        )
+
+
+def find_files(
+    dir_path: os.PathLike,
+    glob_pattern: str | None = None,
+    recursive: bool = False,
+    regex_pattern: str | None = None,
+) -> Iterable[Path]:
     dir_path = Path(dir_path)
     if glob_pattern is None:
         files = dir_path.iterdir()
@@ -147,13 +163,7 @@ def find_last_added_file(
         import re
 
         files = filter(lambda f: re.search(regex_pattern, f.name), files)
-    try:
-        last_added_file = max(files, key=get_creation_time)
-        return last_added_file
-    except:
-        raise ValueError(
-            f"No files found in {dir_path} with pattern {glob_pattern} (recursive={recursive})"
-        )
+    return files
 
 
 def get_model_short_subtitle_suffix_update_item3_kwargs(
