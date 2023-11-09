@@ -25,6 +25,7 @@ assets_dir = parent_dir / 'assets'
 gpt_4_icon_path = assets_dir / 'GPT-4.png'
 gpt_4_plugins_icon_path = assets_dir / 'gpt-4-plugins-purple.png'
 gpt_4_code_interpreter_icon_path = assets_dir / 'gpt-4-code-interpreter.png'
+gpt_4_gizmo_icon_path = assets_dir / 'rg-icon.png'
 
 alfred_workflow_cache_key = 'chatgpt-alfred-workflow'
 

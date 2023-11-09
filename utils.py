@@ -9,6 +9,7 @@ from config import (
     gpt_4_icon_path,
     gpt_4_plugins_icon_path,
     gpt_4_code_interpreter_icon_path,
+    gpt_4_gizmo_icon_path
 )
 
 model_slug_to_model_name_map = {
@@ -199,6 +200,11 @@ def get_model_short_subtitle_suffix_update_item3_kwargs(
             model_short = 'DALL·E'
             subtitle_prefix = f"{model_shorthand} | {date_short}"
             item3_kwargs |= {'icon': str(gpt_4_icon_path)}
+        case 'gizmo':
+            model_shorthand = 'Gizmo'
+            model_short = 'Gizmo'
+            subtitle_prefix = f"{model_shorthand} | {date_short}"
+            item3_kwargs |= {'icon': str(gpt_4_gizmo_icon_path)}
         case _:
             model_shorthand = model
             model_short = model
