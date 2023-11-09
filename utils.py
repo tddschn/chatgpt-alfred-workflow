@@ -25,6 +25,7 @@ model_slug_to_model_name_map = {
     'gpt-4-code-interpreter': 'gpt-4-code-interpreter',
     'text-davinci-002-plugins': 'plugins',
     'gpt-4-dalle': 'dalle',
+    'gpt-4-gizmo': 'gizmo',
 }
 
 
