@@ -8,7 +8,9 @@ ingest: ## ingest linear_conversations.json into chatgpt.db
 	[[ -f $(DB_FILENAME) ]] && rm -v $(DB_FILENAME) || true
 	# add link field
 	<linear_conversations.json jq 'map(. + {"link": ("https://chat.openai.com/c/" + .id)})' > chatgpt-db.json
-	sqlite-utils insert $(DB_FILENAME) linear_conversations chatgpt-db.json --pk id
+	# sqlite-utils insert $(DB_FILENAME) linear_conversations chatgpt-db.json --pk id
+	# don't wanna sort by id by default
+	sqlite-utils insert $(DB_FILENAME) linear_conversations chatgpt-db.json
 	sqlite-utils transform $(DB_FILENAME) linear_conversations -o 'id' -o 'title' -o 'link' -o 'linear_messages' -o 'model_slug'
 	~/.local/pipx/venvs/sqlite-utils/bin/python ~/config/scripts/sqlite_utils_enable_fts_all.py $(DB_FILENAME)
 
