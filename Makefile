@@ -2,6 +2,7 @@ VERCEL_PROJECT_NAME := chatgpt-datasette-vercel
 THIRD_LEVEL_DOMAIN := pdata-chatgpt
 VERCEL_PROJECT_DOMAIN_SETTINGS_URL := https://vercel.com/tddschn/$(VERCEL_PROJECT_NAME)/settings/domains
 DB_FILENAME := chatgpt.db
+DATASETTE_METADATA_FILE := metadata.yml
 
 ingest: ## ingest linear_conversations.json into chatgpt.db
 	[[ -f $(DB_FILENAME) ]] && rm -v $(DB_FILENAME) || true
@@ -12,7 +13,7 @@ ingest: ## ingest linear_conversations.json into chatgpt.db
 	~/.local/pipx/venvs/sqlite-utils/bin/python ~/config/scripts/sqlite_utils_enable_fts_all.py $(DB_FILENAME)
 
 publish-db: ## publish chatgpt.db to Vercel
-	datasette publish vercel --project $(VERCEL_PROJECT_NAME) $(DB_FILENAME) --install datasette-search-all --install datasette-render-timestamps --install datasette-render-images --install datasette-uptime --install datasette-render-html \
+	datasette publish vercel --metadata $(DATASETTE_METADATA_FILE) --project $(VERCEL_PROJECT_NAME) $(DB_FILENAME) --install datasette-search-all --install datasette-render-timestamps --install datasette-render-images --install datasette-uptime --install datasette-render-html \
 	--install datasette-pretty-json
 
 db-all: ingest publish-db ## ingest and publish chatgpt.db to Vercel

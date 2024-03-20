@@ -1,0 +1,37 @@
+title: "ChatGPT Data Export"
+about: tddschn/chatgpt-alfred-workflow
+about_url: https://gitlab.com/tddschn/chatgpt-alfred-workflow
+# description_html: |-
+#   <p>See also: <a href="https://teddysc.me/blog/meta/chatgpt-alfred-workflow-data">Blog Post: chatgpt-alfred-workflow Data</a></p>
+# description_html: |-
+#   <p>Shorter URL available: <a href="https://kelly.datasette.teddysc.me/">kelly.datasette.teddysc.me</a></p>
+#   <br/>
+#   <p>The original CSV files are too large, I selected only 100 rows of each file</p>
+#   <p>See also <a href="https://github.com/tddschn/llm-gender-bias-public/blob/master/papers/kelly-is-a-warm-person.md">the notes on GitHub, including link to paper</a>.</p>
+#   <br/>
+#   <p>This site is published by <a href="https://github.com/tddschn">Teddy</a></p>
+#
+# databases:
+#   chatgpt-alfred-workflow:
+#     tables:
+#       dirs:
+#         plugins:
+#           datasette-render-html:
+#             columns:
+#               - description
+#       dirs_by_date:
+#         plugins:
+#           datasette-render-html:
+#             columns:
+#               - description
+#       dirs_by_num_images:
+#         plugins:
+#           datasette-render-html:
+#             columns:
+#               - description
+
+plugins:
+  datasette-render-images:
+    # 10 MB
+    # https://datasette.io/plugins/datasette-render-images
+    size_limit: 10000000
