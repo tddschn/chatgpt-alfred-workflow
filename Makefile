@@ -4,7 +4,7 @@ VERCEL_PROJECT_DOMAIN_SETTINGS_URL := https://vercel.com/tddschn/$(VERCEL_PROJEC
 DB_FILENAME := chatgpt.db
 
 ingest: ## ingest linear_conversations.json into chatgpt.db
-	[[ -f $(DB_FILENAME) ]] && rm -v $(DB_FILENAME)
+	[[ -f $(DB_FILENAME) ]] && rm -v $(DB_FILENAME) || true
 	# add link field
 	<linear_conversations.json jq 'map(. + {"link": ("https://chat.openai.com/c/" + .id)})' > chatgpt-db.json
 	sqlite-utils insert $(DB_FILENAME) linear_conversations chatgpt-db.json --pk id
