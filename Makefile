@@ -3,7 +3,7 @@ THIRD_LEVEL_DOMAIN := pdata-chatgpt
 VERCEL_PROJECT_DOMAIN_SETTINGS_URL := https://vercel.com/tddschn/$(VERCEL_PROJECT_NAME)/settings/domains
 DB_FILENAME := chatgpt.db
 
-ingest:
+ingest: ## ingest linear_conversations.json into chatgpt.db
 	[[ -f $(DB_FILENAME) ]] && rm -v $(DB_FILENAME)
 	# add link field
 	<linear_conversations.json jq 'map(. + {"link": ("https://chat.openai.com/c/" + .id)})' > chatgpt-db.json
@@ -11,17 +11,17 @@ ingest:
 	sqlite-utils transform $(DB_FILENAME) linear_conversations -o 'id' -o 'title' -o 'link' -o 'linear_messages' -o 'model_slug'
 	~/.local/pipx/venvs/sqlite-utils/bin/python ~/config/scripts/sqlite_utils_enable_fts_all.py $(DB_FILENAME)
 
-publish-db:
+publish-db: ## publish chatgpt.db to Vercel
 	datasette publish vercel --project $(VERCEL_PROJECT_NAME) llm-dra.db --install datasette-search-all --install datasette-render-timestamps --install datasette-render-images --install datasette-uptime --install datasette-render-html \
 	--install datasette-pretty-json
 
-db-all: ingest publish-db
+db-all: ingest publish-db ## ingest and publish chatgpt.db to Vercel
 	@echo 'Domain settings: $(VERCEL_PROJECT_DOMAIN_SETTINGS_URL)'
 
-open-vercel-project-domain-settings:
+open-vercel-project-domain-settings: ## open the Vercel project domain settings
 	open $(VERCEL_PROJECT_DOMAIN_SETTINGS_URL)
 
-add-dns-record:
+add-dns-record: ## add a DNS record for pdata-chatgpt.teddysc.me
 	# https://developers.cloudflare.com/api/operations/dns-records-for-a-zone-create-dns-record
 	cli4 --post 'content=cname.vercel-dns.com.' 'name=$(THIRD_LEVEL_DOMAIN)' 'proxied=true' 'type=CNAME' 'comment=$(VERCEL_PROJECT_DOMAIN_SETTINGS_URL)' /zones/:teddysc.me/dns_records
 
