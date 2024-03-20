@@ -12,7 +12,7 @@ ingest: ## ingest linear_conversations.json into chatgpt.db
 	~/.local/pipx/venvs/sqlite-utils/bin/python ~/config/scripts/sqlite_utils_enable_fts_all.py $(DB_FILENAME)
 
 publish-db: ## publish chatgpt.db to Vercel
-	datasette publish vercel --project $(VERCEL_PROJECT_NAME) llm-dra.db --install datasette-search-all --install datasette-render-timestamps --install datasette-render-images --install datasette-uptime --install datasette-render-html \
+	datasette publish vercel --project $(VERCEL_PROJECT_NAME) $(DB_FILENAME) --install datasette-search-all --install datasette-render-timestamps --install datasette-render-images --install datasette-uptime --install datasette-render-html \
 	--install datasette-pretty-json
 
 db-all: ingest publish-db ## ingest and publish chatgpt.db to Vercel
