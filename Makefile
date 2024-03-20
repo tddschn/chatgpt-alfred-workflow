@@ -1,3 +1,30 @@
+VERCEL_PROJECT_NAME := chatgpt-datasette-vercel
+THIRD_LEVEL_DOMAIN := pdata-chatgpt
+VERCEL_PROJECT_DOMAIN_SETTINGS_URL := https://vercel.com/tddschn/$(VERCEL_PROJECT_NAME)/settings/domains
+DB_FILENAME := chatgpt.db
+
+ingest:
+	[[ -f $(DB_FILENAME) ]] && rm -v $(DB_FILENAME)
+	# add link field
+	<linear_conversations.json jq 'map(. + {"link": ("https://chat.openai.com/c/" + .id)})' > chatgpt-db.json
+	sqlite-utils insert $(DB_FILENAME) linear_conversations chatgpt-db.json --pk id
+	sqlite-utils transform $(DB_FILENAME) linear_conversations -o 'id' -o 'title' -o 'link' -o 'linear_messages' -o 'model_slug'
+	~/.local/pipx/venvs/sqlite-utils/bin/python ~/config/scripts/sqlite_utils_enable_fts_all.py $(DB_FILENAME)
+
+publish-db:
+	datasette publish vercel --project $(VERCEL_PROJECT_NAME) llm-dra.db --install datasette-search-all --install datasette-render-timestamps --install datasette-render-images --install datasette-uptime --install datasette-render-html \
+	--install datasette-pretty-json
+
+db-all: ingest publish-db
+	@echo 'Domain settings: $(VERCEL_PROJECT_DOMAIN_SETTINGS_URL)'
+
+open-vercel-project-domain-settings:
+	open $(VERCEL_PROJECT_DOMAIN_SETTINGS_URL)
+
+add-dns-record:
+	# https://developers.cloudflare.com/api/operations/dns-records-for-a-zone-create-dns-record
+	cli4 --post 'content=cname.vercel-dns.com.' 'name=$(THIRD_LEVEL_DOMAIN)' 'proxied=true' 'type=CNAME' 'comment=$(VERCEL_PROJECT_DOMAIN_SETTINGS_URL)' /zones/:teddysc.me/dns_records
+
 CHATGPT_EXPORT_CONVERSATIONS_FILE = conversations.json
 LINEAR_CONVERSATIONS_FILE = linear_conversations.json
 PRE_COMPUTED_ROWS_FILES = $(wildcard generated/pre_computed_rows.{json,msgpack})
@@ -60,6 +87,7 @@ lint:
 pre-process: ## pre-process linear-conversations.json for Alfred to speed things up
 	./preprocess_conversations.py
 	./alfred.py -g
+	
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
