@@ -91,6 +91,9 @@ pre-process: ## pre-process linear-conversations.json for Alfred to speed things
 	./preprocess_conversations.py
 	./alfred.py -g
 	
+cgupdate: ## same as the cgupdate command in the Alfred workflow
+	# cd ~/testdir/chatgpt-alfred-workflow && /usr/bin/make update-conversations-json-and-workflow && /usr/bin/make workflow-delcache
+	/usr/bin/make update-conversations-json-and-workflow && /usr/bin/make workflow-delcache
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
