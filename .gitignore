@@ -1,6 +1,8 @@
 chatgpt-alfred-workflow
 alfred
 *.wasm
+*.build
+*.bin
 *.db
 generated
 markdown_preview.ipynb
