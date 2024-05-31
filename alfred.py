@@ -56,6 +56,9 @@ def main(wf: Workflow3):
     parser.add_argument(
         '-g', '--generate-alfred-json', action='store_true', help='Generate Alfred JSON'
     )
+    parser.add_argument(
+        '-n', '--first', type=int, help='Only consider the last N chats. Default is all, can be slow if your has a lot of chats.', metavar='N'
+    )
     parser.add_argument('query', nargs='?', default=None)
     args = parser.parse_args(wf.args)
     query = args.query
@@ -65,6 +68,9 @@ def main(wf: Workflow3):
     rows: list[dict]
     # rows = wf.cached_data(alfred_workflow_cache_key, get_rows, max_age=3600)  # type: ignore
     rows = get_rows()
+    if args.first:
+        rows = rows[: args.first]
+        
 
     def prepare_wf_items(query: str | None = None):
         for row in rows:
