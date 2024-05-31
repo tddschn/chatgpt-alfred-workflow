@@ -20,6 +20,7 @@ model_slug_to_model_name_map = {
     'text-davinci-002-render-paid': 'gpt-3.5-turbo',
     'text-davinci-002-render': 'gpt-3.5-turbo',
     'gpt-4': 'gpt-4',
+    'gpt-4o': 'gpt-4o',
     'gpt-4-mobile': 'gpt-4',
     'gpt-4-plugins': 'gpt-4-plugins',
     'gpt-4-browsing': 'gpt-4-browsing',
@@ -180,6 +181,11 @@ def get_model_short_subtitle_suffix_update_item3_kwargs(
             model_shorthand = '4'
             model_short = 'GPT-4'
             subtitle_prefix = f"GPT-4 | {date_short}"
+            item3_kwargs |= {'icon': str(gpt_4_icon_path)}
+        case 'gpt-4o':
+            model_shorthand = '4o'
+            model_short = 'GPT-4o'
+            subtitle_prefix = f"GPT-4o | {date_short}"
             item3_kwargs |= {'icon': str(gpt_4_icon_path)}
         case 'plugins':
             model_shorthand = 'Plugins'
