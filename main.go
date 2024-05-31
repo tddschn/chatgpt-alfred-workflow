@@ -173,16 +173,13 @@ func run() {
 	pflag.BoolVarP(&generateAlfredJSON, "generate-alfred-json", "g", false, "Generate Alfred JSON")
 	pflag.Parse()
 
-	wf.Args() = pflag.Args()
 	config = loadConfig()
 
 	rows := loadRows()
 
 	if generateAlfredJSON {
 		prepareWfItems("", rows)
-		wf.Run(func() {
-			wf.OutputText(wf.Items())
-		})
+		wf.SendFeedback()
 	} else {
 		query := ""
 		if len(wf.Args()) > 0 {
