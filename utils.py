@@ -61,7 +61,7 @@ def chatgpt_conversation_id_to_url(
 ) -> str:
     match destination:
         case 'chatgpt':
-            return f'https://chat.openai.com/c/{id}'
+            return f'https://chatgpt.com/c/{id}'
         case 'typingmind':
             # https://www.typingmind.com/#chat=eac3e257-d2e2-4801-a377-f09323756433
             return f'https://www.typingmind.com/#chat={id}'
